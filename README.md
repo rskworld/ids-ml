@@ -153,7 +153,25 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is open source and available under the MIT License.
 
+Copyright (c) 2025 Molla Samser & Rima Khatun (RSK World)
+
 ## Author
 
-rskworld.in
+**Molla Samser** - Founder  
+**Rima Khatun** - Designer & Tester
+
+### Contact Information
+
+- **Email**: help@rskworld.in | support@rskworld.in
+- **Phone**: +91 93305 39277
+- **Website**: [rskworld.in](https://rskworld.in)
+- **Location**: Nutanhat, Mongolkote, Purba Burdwan, West Bengal, India, 713147
+
+### About RSK World
+
+Founded by Molla Samser, with Designer & Tester Rima Khatun, RSK World is your one-stop destination for free programming resources, source code, and development tools.
+
+---
+
+**Repository**: [https://github.com/rskworld/ids-ml](https://github.com/rskworld/ids-ml)
 
