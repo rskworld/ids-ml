@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - IDS ML | RSK World</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-section {
+            padding: 60px 0;
+        }
+        .demo-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .demo-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+        }
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(231, 76, 60, 0.1);
+        }
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        .results.show {
+            display: block;
+        }
+        .result-card {
+            background: var(--light-color);
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .prediction-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .prediction-normal {
+            background: var(--success-color);
+            color: #fff;
+        }
+        .prediction-attack {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading.show {
+            display: block;
+        }
+        .spinner {
+            border: 4px solid var(--light-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar" id="topBar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-envelope"></i> help@rskworld.in</span>
+                    <span><i class="fas fa-phone"></i> +91 93305 39277</span>
+                </div>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>IDS ML</span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="demo.html" class="active">Demo</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Try IDS ML Demo</h1>
+            <p>Upload network traffic data and get real-time attack detection predictions</p>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section">
+        <div class="container">
+            <div class="demo-container">
+                <div class="demo-card">
+                    <h2>Upload Network Traffic Data</h2>
+                    <p>Upload a CSV file containing network traffic data to analyze and detect potential attacks.</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
+                        <p><strong>Click to upload</strong> or drag and drop</p>
+                        <p style="color: var(--text-light); font-size: 14px;">CSV files only (Max 10MB)</p>
+                        <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modelSelect">Select ML Model:</label>
+                        <select id="modelSelect" class="form-group select">
+                            <option value="random_forest">Random Forest</option>
+                            <option value="svm">SVM</option>
+                            <option value="neural_network">Neural Network</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" id="analyzeBtn" style="width: 100%;" disabled>
+                        <i class="fas fa-search"></i> Analyze Traffic
+                    </button>
+
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing network traffic data...</p>
+                    </div>
+
+                    <div class="results" id="results">
+                        <h3>Analysis Results</h3>
+                        <div id="resultsContent"></div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <h3>Sample Data Format</h3>
+                    <p>Your CSV file should contain network traffic features. Example:</p>
+                    <pre style="background: var(--light-color); padding: 15px; border-radius: 5px; overflow-x: auto;">
+duration,protocol_type,service,src_bytes,dst_bytes,count,label
+0,tcp,http,1000,2000,5,normal
+1,udp,ftp,500,1500,3,dos
+...</pre>
+                    <p style="margin-top: 15px;"><strong>Note:</strong> The 'label' column is optional. If provided, it will be used for accuracy comparison.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About IDS ML</h3>
+                    <p>A machine learning-based intrusion detection system to identify network attacks and anomalies in real-time.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="demo.html">Demo</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> help@rskworld.in</li>
+                        <li><i class="fas fa-phone"></i> +91 93305 39277</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Nutanhat, Mongolkote, Purba Burdwan, West Bengal, India, 713147</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 RSK World. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/demo.js"></script>
+</body>
+</html>
+
